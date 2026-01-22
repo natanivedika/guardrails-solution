@@ -1,5 +1,5 @@
 from collections import deque
-from detectors.regex import detect as regex_detect
+from detectors.regex_detector import detect as regex_detect
 from detectors.semantic import SemanticDetector
 from masker import mask
 from decision import decide
