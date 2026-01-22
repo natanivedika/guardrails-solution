@@ -1,0 +1,27 @@
+{
+    "industry": "healthcare",
+    "country": "USA",
+    "rules": [
+        {
+            "id": "hipaa_phi",
+            "priority": 1,
+            "action": "block",
+            "confidence": 0.90,
+            "detectors": ["semantic", "ner"]
+        },
+        {
+            "id": "ssn",
+            "priority": 2,
+            "action": "mask",
+            "mask": "partial",
+            "detectors": ["regex"]
+        },
+        {
+            "id": "credit-card",
+            "priority": 2,
+            "action": "mask",
+            "mask": "last4",
+            "detectors": ["regex"]
+        }
+    ]
+}
