@@ -1,6 +1,11 @@
-def decide(detections, semantic):
-    if semantic and semantic["action"] == "block":
+def decide(regex_hits, semantic_hit, ner_hits):
+    if semantic_hit and semantic_hit["action"] == "block":
         return "BLOCK"
-    if detections:
+    
+    if ner_hits:
+        return "BLOCK"
+    
+    if regex_hits:
         return "MASK"
+    
     return "ALLOW"
