@@ -10,6 +10,7 @@ def stream_guard(stream):
     buffer = deque(maxlen=120)
 
     for chunk in stream:
+        prev_len = len(buffer) # track where new chunk begins in buffer
         buffer.extend(chunk)
         text = "".join(buffer)
 
@@ -22,6 +23,16 @@ def stream_guard(stream):
             yield "[BLOCKED]"
             break
         elif action == "MASK":
-            yield mask(chunk, regex_hits)
+            masked = list(chunk)
+
+            for h in regex_hits:
+                # map buffer index to chunk index: right-indexing for proper masking
+                start = h["start"] - prev_len
+                end   = h["end"]   - prev_len
+
+                for i in range(max(0,start), min(len(chunk), end)):
+                    masked[i] = "*"
+
+            yield "".join(masked)
         else:
             yield chunk
