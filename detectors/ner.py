@@ -1,6 +1,11 @@
 import spacy
 from presidio_analyzer import AnalyzerEngine
 
+MEDICAL_KEYWORDS = {
+    "diagnosed", "treatment", "prescription", "lab",
+    "test", "condition", "disease", "diabetes", "cancer"
+}
+
 class NERDetector:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
@@ -12,11 +17,16 @@ class NERDetector:
         # store detected spaCy entities
         doc = self.nlp(text)
 
+        has_medical_context = any(
+            tok.lemma_.lower() in MEDICAL_KEYWORDS for tok in doc
+        )
+
+
         # iterate through the detected entities
         for ent in doc.ents:
             # check if the entity is a relevant type for PHI detection (names, locations, organizations, dates)
             # and add to list with the metadata
-            if ent.label_ in {"PERSON", "GPE", "ORG", "DATE"}:
+            if ent.label_ in {"PERSON", "GPE", "ORG", "DATE"} and has_medical_context:
                 hits.append({
                     "type": ent.label_,      # entity category
                     "start": ent.start_char, # start position
@@ -34,4 +44,4 @@ class NERDetector:
                 "confidence": r.score
             })
 
-        return hits
+        return hits, has_medical_context

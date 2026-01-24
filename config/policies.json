@@ -1,27 +1,35 @@
 {
     "industry": "healthcare",
     "country": "USA",
-    "rules": [
-        {
-            "id": "hipaa_phi",
-            "priority": 1,
-            "action": "block",
-            "confidence": 0.90,
-            "detectors": ["semantic", "ner"]
+    
+    "entities": {
+
+        "SSN": {
+            "level": "STOP"
         },
-        {
-            "id": "ssn",
-            "priority": 2,
-            "action": "mask",
-            "mask": "partial",
-            "detectors": ["regex"]
+        "MEDICAL_CONDITION": {
+            "level": "RESTRICTED"
         },
-        {
-            "id": "credit-card",
-            "priority": 2,
-            "action": "mask",
-            "mask": "last4",
-            "detectors": ["regex"]
+        "PATIENT_NAME": {
+            "level": "RESTRICTED"
+        },
+        "PHONE_NUM": {
+            "level": "RESTRICTED"
+        },
+        "EMAIL": {
+            "level": "RESTRICTED"
         }
-    ]
+    },
+
+    "combinations": [
+        {
+            "if": ["PATIENT_NAME", "MEDICAL_CONDITION"],
+            "then": "STOP"
+        }
+    ],
+
+    "masking": {
+        "strategy": "asterisk",
+        "replacement": "***"
+    }
 }

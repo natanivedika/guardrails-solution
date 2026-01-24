@@ -23,9 +23,19 @@ def stream_guard(stream):
 
         regex_hits = regex_detect(text)
         semantic_hit = semantic.detect(text)
-        ner_hits = ner.detect(text)
+        ner_hits, has_medical_context = ner.detect(text)
 
-        action = decide(regex_hits, semantic_hit, ner_hits)
+
+        #regex_hits = regex_detect(text) # run first, fast
+        #semantic_hit = semantic.detect(text) if not regex_hits else None # only if regex wasn't detected
+        
+        # Only run NER if both regex and semantic didn't find anything
+        #if not regex_hits and not semantic_hit:
+            #ner_hits, has_medical_context = ner.detect(text)
+        #else:
+            #ner_hits, has_medical_context = [], False
+
+        action = decide(regex_hits, semantic_hit, ner_hits, has_medical_context)
 
         if action == "BLOCK":
             yield "[BLOCKED]"

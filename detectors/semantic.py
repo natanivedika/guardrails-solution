@@ -27,10 +27,10 @@ class SemanticDetector:
                 embeddings=[emb]
             )
 
-    """When text is passed, convert it to vector embedding, find a rule in the db collection that is most similar to the text. If the similarity distance is very similar (<0.25), return the appropriate action. Return None if no similar rule is found."""
+    """When text is passed, convert it to vector embedding, find a rule in the db collection that is most similar to the text. If the similarity distance is very similar (<0.5), return the appropriate action. Return None if no similar rule is found."""
     def detect(self, text):
         emb = self.model.encode(text).tolist()
         res = self.collection.query(query_embeddings=[emb], n_results=1)
-        if res["distances"][0][0] < 0.25:
+        if res["distances"][0][0] < 0.5:
             return res["metadatas"][0][0]
         return None
